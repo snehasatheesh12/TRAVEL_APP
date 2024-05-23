@@ -1,19 +1,13 @@
 from rest_framework import serializers
-from .models import person
+from .models import Destination
 from django.contrib.auth.models import User
 
-class peopleSerializer(serializers.ModelSerializer):
+
+class DestinationSerializer(serializers.ModelSerializer):
     class Meta:
-        model=person
-        fields ='__all__'
-    
-    def validate(self,data):
-        special_charecters="!@#$%^&*()_+?<>/"
-        if any(c in special_charecters for c in data['name']):
-            raise serializers.ValidationError("name cannot contain special charecters")
-        if data['age']<18:
-            raise serializers.ValidationError('age should greater')
-        return data
+        model = Destination
+        fields = '__all__'
+
     
 class RegisterSerializer(serializers.Serializer):
     username=serializers.CharField()
