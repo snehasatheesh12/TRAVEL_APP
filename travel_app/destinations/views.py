@@ -9,9 +9,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework import generics, permissions
+from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
+
 
 
 class LoginAPI(APIView):
+    permission_classes = [AllowAny] 
     def post(self,request):
         token=0
         data=request.data
@@ -25,8 +29,10 @@ class LoginAPI(APIView):
         token=Token.objects.get_or_create(user=user)
         return Response({'status':True,'message':'user login','token':str(token)},status.HTTP_201_CREATED)
 
+
         
 class RegisterAPI(APIView):
+    permission_classes = [AllowAny] 
     def post(self,request):
         data=request.data
         serilizer=RegisterSerializer(data=data)
