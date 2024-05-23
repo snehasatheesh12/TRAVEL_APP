@@ -15,19 +15,22 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class LoginAPI(APIView):
-    permission_classes = [AllowAny] 
-    def post(self,request):
-        token=0
-        data=request.data
-        serilizer=LoginSerializer(data=data)
-        if not serilizer.is_valid():
-            return Response({'status':False,'message':serilizer.errors},status.HTTP_400_BAD_REQUEST)
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        data = request.data
+        serializer = LoginSerializer(data=data)
         
-        user=authenticate(username=serilizer.data['username'],password=serilizer.data['password'])
+        if not serializer.is_valid():
+            return Response({'status': False, 'message': serializer.errors}, status.HTTP_400_BAD_REQUEST)
+        
+        user = authenticate(username=serializer.data['username'], password=serializer.data['password'])
+        
         if not user:
-            return Response({'status':True,'message':'invaild credinital','token':str(token)},status.HTTP_201_CREATED)
-        token=Token.objects.get_or_create(user=user)
-        return Response({'status':True,'message':'user login','token':str(token)},status.HTTP_201_CREATED)
+            return Response({'status': False, 'message': 'Invalid credentials'}, status.HTTP_401_UNAUTHORIZED)
+        
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({'status': True, 'message': 'User login', 'token': token.key}, status.HTTP_200_OK)
 
 
         
@@ -42,17 +45,16 @@ class RegisterAPI(APIView):
         return Response({'status':True,'message':'user created'},status.HTTP_201_CREATED)
 
 
-    
 class DestinationListCreate(generics.ListCreateAPIView):
     queryset = Destination.objects.all()
     serializer_class = DestinationSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated] 
 
 class DestinationRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Destination.objects.all()
     serializer_class = DestinationSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    
+    permission_classes = [IsAuthenticated]     
 # @api_view(['GET','POST','PUT'])
 # def index(request):
 #     courses={'course-name':'python','learn':['django','Tornado','FastApi'],'course-provider':'scaler'}
