@@ -3,6 +3,7 @@ from .models import Destination
 from django.contrib.auth.models import User
 
 
+
 class DestinationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Destination
@@ -29,12 +30,10 @@ class RegisterSerializer(serializers.Serializer):
         return validated_data
     
       
-            
-    
-          
-    
 class LoginSerializer(serializers.Serializer):
     username=serializers.CharField()
     password=serializers.CharField()
+    
+
 
     

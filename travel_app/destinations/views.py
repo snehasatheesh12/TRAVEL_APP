@@ -1,13 +1,14 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import *
-from destinations.serializer import LoginSerializer,RegisterSerializer
+from destinations.serializer import LoginSerializer,RegisterSerializer,DestinationSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from rest_framework import generics, permissions
 
 
 class LoginAPI(APIView):
@@ -33,6 +34,18 @@ class RegisterAPI(APIView):
             return Response({'status':False,'message':serilizer.errors},status.HTTP_400_BAD_REQUEST)
         serilizer.save()
         return Response({'status':True,'message':'user created'},status.HTTP_201_CREATED)
+
+
+    
+class DestinationListCreate(generics.ListCreateAPIView):
+    queryset = Destination.objects.all()
+    serializer_class = DestinationSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class DestinationRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Destination.objects.all()
+    serializer_class = DestinationSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
 # @api_view(['GET','POST','PUT'])
 # def index(request):
